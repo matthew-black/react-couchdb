@@ -66,10 +66,17 @@
 
 ## How We Use HTTP to Interact w/ CouchDB:
 
-### Fetching All the Bear Documents w/ HTTP GET:
+### Fetching All the Bear Document Metadata w/ HTTP GET:
 * This is kinda like a basic `SELECT * FROM bears`, except it just gives us metadata about each bear document in our `bears` database:
     * ```zsh
       curl -XGET http://admin:prime@localhost:5984/bears/_all_docs
+      ```
+
+### Fetching All the Bear Documents w/ HTTP GET:
+* This is the `SELECT * FROM bears` replacement:
+* Note: Need to wrap the URL in quotes if it includes query params.
+    * ```zsh
+      curl -XGET 'http://admin:prime@localhost:5984/bears/_all_docs?include_docs=true'
       ```
 
 ### Fetching One Bear Document w/ HTTP GET:
@@ -91,6 +98,13 @@
 * Here's how we could bring Winnie the Pooh to life (by flipping `"isRealBear"` to `true`):
       * ```zsh
       curl -XPUT http://admin:prime@localhost:5984/bears/da39956cac2be9f8b907ccdc2b004560 -H "Content-Type: application/json" -d '{"_id": "da39956cac2be9f8b907ccdc2b004560","_rev": "1-89e5a855255b63f1b63afeb0cde8c4e9","name": "Winnie the Pooh","color": "Yellow","isRealBear": true}'
+      ```
+
+### Deleting a Bear Document w/ HTTP DELETE:
+* To delete a document, you must provide both the `"_id"` (in the URL) and `"_rev"` (in a query parameter) values for the document you're targeting.
+* It turns out that bringing Winnie the Pooh to life was a mistake. All the honey is gone. Here's how we delete Winnie the Pooh:
+      * ```zsh
+      curl -XDELETE 'http://admin:prime@localhost:5984/bears/da39956cac2be9f8b907ccdc2b004560?rev=2-5810eab404de7811d4778943ffbeabd3'
       ```
       
 ---
