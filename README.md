@@ -18,27 +18,27 @@
 5. Create a database named `bears`.
 6. Click your newly created `bears` database.
 7. Click the green Create Document button.
-  * This will create a JSON object that has a system-generated `"id"` value.
-  * Copy and paste the `name`, `color`, and `isRealBear` properties into this new JSON document to make a bear. Should look like this:
-  *   ```JSON
-      {
-        "_id": "16c0fe95d43829e068750a054c007aca",
-        "name": "Wish Bear",
-        "color": "Blue",
-        "isRealBear": false
-      }
-      ```
-  * Note: You'll need to add a comma to the end of the `"_id"` line.
-  * 
+    * This will create a JSON object that has a system-generated `"id"` value.
+    * Copy and paste the `name`, `color`, and `isRealBear` properties into this new JSON document to make a bear. Should look like this:
+    *   ```JSON
+        {
+          "_id": "16c0fe95d43829e068750a054c007aca",
+          "name": "Wish Bear",
+          "color": "Blue",
+          "isRealBear": false
+        }
+        ```
+    * Note: You'll need to add a comma to the end of the `"_id"` line.
+    * 
 8. Make another bear document:
-  *   ```JSON
-      {
-        "_id": "16c0fe95d43829e068750a054c008852",
-        "name": "Kodiak Bear",
-        "color": "Brown",
-        "isRealBear": true
-      }
-      ```
+    *   ```JSON
+        {
+          "_id": "16c0fe95d43829e068750a054c008852",
+          "name": "Kodiak Bear",
+          "color": "Brown",
+          "isRealBear": true
+        }
+        ```
 9. Woo. That's enough.
 
 ---
