@@ -72,10 +72,25 @@
       curl -XGET http://admin:prime@localhost:5984/bears/_all_docs
       ```
 
+### Fetching One Bear Document w/ HTTP GET:
+* This is like a basic `SELECT * FROM bears WHERE id=someId`:
+    * ```zsh
+      curl -XGET http://admin:prime@localhost:5984/bears/16c0fe95d43829e068750a054c007aca
+      ```
+    * 👆 `/bears/[_id value of a bear document goes herer]
+
 ### Creating a Bear Document w/ HTTP POST:
 * Here's how we can add Winnie the Pooh to our `bears` database via the command line. (`cURL` is just a tool that lets us make HTTP requests from the command line. It's like the most minimal possible version of Postman.)
     * ```zsh
       curl -XPOST http://admin:prime@localhost:5984/bears/ -H "Content-Type: application/json" -d '{"name": "Winnie the Pooh","color": "Yellow","isRealBear": false}'
       ```
-  
+
+### Updating a Bear Document w/ HTTP PUT:
+* **Important**: When doing an update, you can't just update a single property (like we can update a single column's value w/ SQL). When updating a document, you have to provide the entire desired "new revision" of that document.
+* To update a document, you must provide both the `"_id"` and `"_rev"` values for the document you're targeting.
+* Here's how we could bring Winnie the Pooh to life (by flipping `"isRealBear"` to `true`):
+      * ```zsh
+      curl -XPUT http://admin:prime@localhost:5984/bears/da39956cac2be9f8b907ccdc2b004560 -H "Content-Type: application/json" -d '{"_id": "da39956cac2be9f8b907ccdc2b004560","_rev": "1-89e5a855255b63f1b63afeb0cde8c4e9","name": "Winnie the Pooh","color": "Yellow","isRealBear": true}'
+      ```
+      
 ---
