@@ -11,6 +11,7 @@
 4. `npm run dev` to start the Vite server that runs the React app.
 
 ##### Install CouchDB and Create a Bears Database:
+*Note: The current CouchDB.dmg file (3.3.1) for Mac is missing a required dependency called spidermonkey. The below process may not work if that is still the case. [Click here](./readme_assets/broken_couch_install.md) to see how we got around it.
 1. Download and install [CouchDB](https://couchdb.apache.org/#download) by dragging it into your applications folder.
 2. Open CouchDB from your applications folder.
 3. Create an account when prompted.
