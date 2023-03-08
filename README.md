@@ -69,27 +69,27 @@
 ### Fetching All the Bear Document Metadata w/ HTTP GET:
 * This is kinda like a basic `SELECT * FROM bears`, except it just gives us metadata about each bear document in our `bears` database:
     * ```zsh
-      curl -XGET http://admin:prime@localhost:5984/bears/_all_docs
+      curl -XGET http://admin:admin@localhost:5984/bears/_all_docs
       ```
 
 ### Fetching All the Bear Documents w/ HTTP GET:
 * This is the `SELECT * FROM bears` replacement:
 * Note: Need to wrap the URL in quotes if it includes query params.
     * ```zsh
-      curl -XGET 'http://admin:prime@localhost:5984/bears/_all_docs?include_docs=true'
+      curl -XGET 'http://admin:admin@localhost:5984/bears/_all_docs?include_docs=true'
       ```
 
 ### Fetching One Bear Document w/ HTTP GET:
 * This is like a basic `SELECT * FROM bears WHERE id=someId`:
     * ```zsh
-      curl -XGET http://admin:prime@localhost:5984/bears/16c0fe95d43829e068750a054c007aca
+      curl -XGET http://admin:admin@localhost:5984/bears/16c0fe95d43829e068750a054c007aca
       ```
     * 👆 `/bears/[_id value of a bear document goes herer]
 
 ### Creating a Bear Document w/ HTTP POST:
 * Here's how we can add Winnie the Pooh to our `bears` database via the command line. (`cURL` is just a tool that lets us make HTTP requests from the command line. It's like the most minimal possible version of Postman.)
     * ```zsh
-      curl -XPOST http://admin:prime@localhost:5984/bears/ -H "Content-Type: application/json" -d '{"name": "Winnie the Pooh","color": "Yellow","isRealBear": false}'
+      curl -XPOST http://admin:admin@localhost:5984/bears/ -H "Content-Type: application/json" -d '{"name": "Winnie the Pooh","color": "Yellow","isRealBear": false}'
       ```
 
 ### Updating a Bear Document w/ HTTP PUT:
@@ -97,14 +97,42 @@
 * To update a document, you must provide both the `"_id"` and `"_rev"` values for the document you're targeting.
 * Here's how we could bring Winnie the Pooh to life (by flipping `"isRealBear"` to `true`):
       * ```zsh
-      curl -XPUT http://admin:prime@localhost:5984/bears/da39956cac2be9f8b907ccdc2b004560 -H "Content-Type: application/json" -d '{"_id": "da39956cac2be9f8b907ccdc2b004560","_rev": "1-89e5a855255b63f1b63afeb0cde8c4e9","name": "Winnie the Pooh","color": "Yellow","isRealBear": true}'
+      curl -XPUT http://admin:admin@localhost:5984/bears/da39956cac2be9f8b907ccdc2b004560 -H "Content-Type: application/json" -d '{"_id": "da39956cac2be9f8b907ccdc2b004560","_rev": "1-89e5a855255b63f1b63afeb0cde8c4e9","name": "Winnie the Pooh","color": "Yellow","isRealBear": true}'
       ```
 
 ### Deleting a Bear Document w/ HTTP DELETE:
 * To delete a document, you must provide both the `"_id"` (in the URL) and `"_rev"` (in a query parameter) values for the document you're targeting.
 * It turns out that bringing Winnie the Pooh to life was a mistake. All the honey is gone. Here's how we delete Winnie the Pooh:
       * ```zsh
-      curl -XDELETE 'http://admin:prime@localhost:5984/bears/da39956cac2be9f8b907ccdc2b004560?rev=2-5810eab404de7811d4778943ffbeabd3'
+      curl -XDELETE 'http://admin:admin@localhost:5984/bears/da39956cac2be9f8b907ccdc2b004560?rev=2-5810eab404de7811d4778943ffbeabd3'
       ```
       
 ---
+
+## How to Query? Views:
+
+This is wild, but kinda nifty. We don't really "query" a CouchDB database. Instead, we send GET requests to endpoints whose job is to perform some combination of filtering/mapping/reducing all the documents in a given database.
+
+What if we want to obtain only the real bears? (Only the bears whose `"isRealBear"` property is `true`.)
+
+* In SQL-land, that's a simple WHERE clauise!
+    * `SELECT * FROM "bears" WHERE "isRealBear" = true;`
+
+* In CouchDB-land, we need to expose an endpoint whose job will always-and-forever be sending back just the real bears.
+* The endpoint itself will be something like:
+    * `/bears/_design/bearsViews/_view/realBears`
+    * `/[databaseName]/_design/[nameOfViews]/_view/[nameOfView]`
+* Creating the `realBears` view looks like this in Fauxton:
+    * ![](./readme_assets/fauxton_real_bears.png)
+    * Take a look at the Map function 👆 there. That function will be executed on each object that is stored in a given database.
+        * The `emit` function inside of it is how you add a chunk of data to the view's output. It adds an entry to the result that the view will send as an HTTP response.
+        * The `emit` function takes two arguments:
+            1. The `key`.
+            2. The `value`.
+        * Read about it in the [CouchDB docs](https://docs.couchdb.org/en/stable/ddocs/views/intro.html). 🙂
+* Hitting this endpoint with a GET request looks like:
+    * ![](./readme_assets/real_bears_response.png)
+
+Lastly! If you have 33 minutes to spare, I can't recommend [this video](https://www.youtube.com/watch?v=c60DGao6sls) highly enough. It does a wonderful job explaining views:
+
+*Note: CouchDB does expose an "ad-hoc" query language called Mango.* It's based on the way queries are formed for MongoDB, which is another NoSQL database. But, from what I've read/watched so far, this query language is meant to serve the use case of making a one-time custom query...they aren't as performant as views.
